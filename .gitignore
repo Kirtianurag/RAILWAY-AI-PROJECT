@@ -1,0 +1,22 @@
+# Node modules
+node_modules/
+BACKEND/node_modules/
+frontend/node_modules/
+
+# Environment files
+.env
+BACKEND/.env
+frontend/.env
+
+# Build folders
+dist/
+build/
+.vite/
+
+# Logs
+logs
+*.log
+
+# Editor
+.vscode/
+.idea/
