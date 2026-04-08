@@ -8,20 +8,37 @@ dotenv.config();
 
 const app = express();
 
-/* middlewares */
-app.use(cors());
+/* ================= MIDDLEWARE ================= */
+
+// allow frontend (vercel) to call backend (railway)
+app.use(cors({
+  origin: [
+    "https://railway-ai-project.vercel.app"
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
+
 app.use(express.json());
 
-/* routes */
+
+/* ================= ROUTES ================= */
+
 app.use("/api/auth", authRoutes);
 
-/* health check route */
+
+/* ================= HEALTH CHECK ================= */
+
+// test route to check server status
 app.get("/", (req, res) => {
   res.status(200).send("API is running 🚀");
 });
 
-/* start server */
+
+/* ================= START SERVER ================= */
+
 const startServer = async () => {
+
   try {
 
     await mongoose.connect(process.env.MONGO_URI);
@@ -40,6 +57,7 @@ const startServer = async () => {
     process.exit(1);
 
   }
+
 };
 
 startServer();
