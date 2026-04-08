@@ -26,9 +26,9 @@ app.get("/", (req, res) => {
   res.send("Backend working 🚀");
 });
 
-/* port */
+/* PORT must match railway */
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 5000;
 
 /* start server */
 
@@ -42,8 +42,8 @@ mongoose.connect(process.env.MONGO_URI)
   });
 
 })
-.catch((error) => {
+.catch((err) => {
 
-  console.log("MongoDB error:", error.message);
+  console.log(err);
 
 });
