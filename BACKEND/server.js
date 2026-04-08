@@ -11,7 +11,12 @@ const app = express();
 /* ================= MIDDLEWARE ================= */
 
 app.use(cors({
-  origin: "*"
+  origin: [
+    "https://railway-ai-project.vercel.app",
+    "http://localhost:5173"
+  ],
+  methods: ["GET","POST","PUT","DELETE"],
+  credentials: true
 }));
 
 app.use(express.json());
