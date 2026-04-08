@@ -8,50 +8,45 @@ dotenv.config();
 
 const app = express();
 
+
 // middlewares
-
 app.use(cors());
-
 app.use(express.json());
 
-// routes
 
-app.use("/api/auth", authRoutes);
-
-// test route
-
+// health check route (VERY IMPORTANT for Railway)
 app.get("/", (req, res) => {
-
-  res.send("API is running");
-
+  res.status(200).json({
+    message: "API is running successfully 🚀"
+  });
 });
 
-// ✅ SAFE Mongo connection
 
+// routes
+app.use("/api/auth", authRoutes);
+
+
+// start server after DB connects
 const startServer = async () => {
-
   try {
 
     await mongoose.connect(process.env.MONGO_URI);
 
     console.log("MongoDB connected");
 
-
-
     const PORT = process.env.PORT || 5000;
 
-    app.listen(PORT, () => {
+    app.listen(PORT, "0.0.0.0", () => {
       console.log(`Server running on port ${PORT}`);
     });
 
   } catch (error) {
 
-    console.error("❌ MongoDB connection failed:", error.message);
+    console.error("MongoDB connection failed:", error.message);
 
     process.exit(1);
 
   }
-
 };
 
 startServer();
