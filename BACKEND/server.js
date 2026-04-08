@@ -8,20 +8,19 @@ dotenv.config();
 
 const app = express();
 
+/* middlewares */
 app.use(cors());
 app.use(express.json());
 
+/* routes */
 app.use("/api/auth", authRoutes);
 
-/* health routes */
+/* health check route */
 app.get("/", (req, res) => {
-  res.send("API is running 🚀");
+  res.status(200).send("API is running 🚀");
 });
 
-app.get("/api", (req, res) => {
-  res.send("API working");
-});
-
+/* start server */
 const startServer = async () => {
   try {
 
@@ -29,9 +28,9 @@ const startServer = async () => {
 
     console.log("MongoDB connected");
 
-    const PORT = process.env.PORT || 8080;
+    const PORT = process.env.PORT || 3000;
 
-    app.listen(PORT, "0.0.0.0", () => {
+    app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });
 
