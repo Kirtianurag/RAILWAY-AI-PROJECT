@@ -8,7 +8,7 @@ dotenv.config();
 
 const app = express();
 
-/* middleware */
+/* ================= MIDDLEWARE ================= */
 
 app.use(cors({
   origin: "*"
@@ -16,21 +16,21 @@ app.use(cors({
 
 app.use(express.json());
 
-/* routes */
+/* ================= ROUTES ================= */
 
 app.use("/api/auth", authRoutes);
 
-/* test route */
+/* health check route */
 
 app.get("/", (req, res) => {
   res.send("Backend working 🚀");
 });
 
-/* PORT must match railway */
+/* ================= PORT ================= */
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 
-/* start server */
+/* ================= DB + SERVER ================= */
 
 mongoose.connect(process.env.MONGO_URI)
 .then(() => {
@@ -38,12 +38,12 @@ mongoose.connect(process.env.MONGO_URI)
   console.log("MongoDB connected");
 
   app.listen(PORT, () => {
-    console.log("Server running on port", PORT);
+    console.log(`Server running on port ${PORT}`);
   });
 
 })
 .catch((err) => {
 
-  console.log(err);
+  console.log("Mongo error:", err.message);
 
 });
