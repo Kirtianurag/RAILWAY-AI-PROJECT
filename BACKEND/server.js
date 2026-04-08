@@ -8,56 +8,42 @@ dotenv.config();
 
 const app = express();
 
-/* ================= MIDDLEWARE ================= */
+/* middleware */
 
-// allow frontend (vercel) to call backend (railway)
 app.use(cors({
-  origin: [
-    "https://railway-ai-project.vercel.app"
-  ],
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true
+  origin: "*"
 }));
 
 app.use(express.json());
 
-
-/* ================= ROUTES ================= */
+/* routes */
 
 app.use("/api/auth", authRoutes);
 
+/* test route */
 
-/* ================= HEALTH CHECK ================= */
-
-// test route to check server status
 app.get("/", (req, res) => {
-  res.status(200).send("API is running 🚀");
+  res.send("Backend working 🚀");
 });
 
+/* port */
 
-/* ================= START SERVER ================= */
+const PORT = process.env.PORT || 8080;
 
-const startServer = async () => {
+/* start server */
 
-  try {
+mongoose.connect(process.env.MONGO_URI)
+.then(() => {
 
-    await mongoose.connect(process.env.MONGO_URI);
+  console.log("MongoDB connected");
 
-    console.log("MongoDB connected");
+  app.listen(PORT, () => {
+    console.log("Server running on port", PORT);
+  });
 
-    const PORT = process.env.PORT || 3000;
+})
+.catch((error) => {
 
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
+  console.log("MongoDB error:", error.message);
 
-  } catch (error) {
-
-    console.error("MongoDB connection failed:", error.message);
-    process.exit(1);
-
-  }
-
-};
-
-startServer();
+});
