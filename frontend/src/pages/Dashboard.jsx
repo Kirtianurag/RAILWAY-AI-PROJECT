@@ -14,12 +14,6 @@ const Dashboard = () => {
   const user = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
-    if (!user) {
-      navigate("/");
-    }
-  }, [navigate, user]);
-
-  useEffect(() => {
     if (location.state?.scrollToAI) {
       aiRef.current?.scrollIntoView({
         behavior: "smooth",
@@ -47,24 +41,41 @@ const Dashboard = () => {
               className="w-14 h-14 rounded-full border-2 border-cyan-400"
               alt="logo"
             />
-            <h1 className="text-2xl font-bold text-cyan-400">
+            <h1 className="text-2xl font-bold text-cyan-400 cursor-pointer" onClick={() => navigate("/")}>
               Indian Railway AI Dashboard
             </h1>
           </div>
 
-          <button
-            onClick={logout}
-            className="bg-red-600 hover:bg-red-700 px-5 py-2 rounded-lg transition"
-          >
-            Logout
-          </button>
+          {user ? (
+            <button
+              onClick={logout}
+              className="bg-red-600 hover:bg-red-700 px-5 py-2 rounded-lg transition font-bold"
+            >
+              Logout
+            </button>
+          ) : (
+            <div className="flex gap-3">
+              <button
+                onClick={() => navigate("/login")}
+                className="border-2 border-cyan-500 text-cyan-400 hover:bg-cyan-500 hover:text-[#0f172a] px-5 py-2 rounded-lg transition font-bold"
+              >
+                Login
+              </button>
+              <button
+                onClick={() => navigate("/register")}
+                className="bg-cyan-500 hover:bg-cyan-600 text-[#0f172a] px-5 py-2 rounded-lg transition font-bold"
+              >
+                Register
+              </button>
+            </div>
+          )}
         </div>
 
         {/* ================= WELCOME ================= */}
         <div className="mt-10">
           <h2 className="text-3xl font-bold">
             Welcome,{" "}
-            <span className="text-cyan-400">{user?.name}</span> 👋
+            <span className="text-cyan-400">{user ? user.name : "Guest"}</span> 👋
           </h2>
           <p className="text-gray-400 mt-2">
             AI-powered railway booking system
@@ -81,7 +92,14 @@ const Dashboard = () => {
           <InfoCard
             title="🎟 Book Tickets"
             desc="Smart booking with availability"
-            onClick={() => navigate("/book-ticket")}
+            onClick={() => {
+              if (!user) {
+                alert("Please login first to book tickets!");
+                navigate("/login");
+              } else {
+                navigate("/book-ticket");
+              }
+            }}
           />
           <InfoCard
             title="🤖 AI Recommendations"
@@ -93,10 +111,17 @@ const Dashboard = () => {
             }
           />
           <InfoCard
-  title="📜 Booking History"
-  desc="View your past ticket bookings"
-  onClick={() => navigate("/booking-history")}
-/>
+            title="📜 Booking History"
+            desc="View your past ticket bookings"
+            onClick={() => {
+              if (!user) {
+                alert("Please login first to view your booking history!");
+                navigate("/login");
+              } else {
+                navigate("/booking-history");
+              }
+            }}
+          />
         </div>
 
 

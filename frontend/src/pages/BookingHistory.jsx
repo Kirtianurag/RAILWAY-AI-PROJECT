@@ -6,9 +6,15 @@ const BookingHistory = () => {
   const [bookings, setBookings] = useState([]);
 
   useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user) {
+      alert("Please login first to view your booking history!");
+      navigate("/login");
+      return;
+    }
     const stored = JSON.parse(localStorage.getItem("bookings")) || [];
     setBookings(stored);
-  }, []);
+  }, [navigate]);
 
   const cancelBooking = (pnr) => {
     const updated = bookings.map((b) =>

@@ -5,6 +5,14 @@ const BookTicket = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
 
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user) {
+      alert("Please login first to access the booking page!");
+      navigate("/login");
+    }
+  }, [navigate]);
+
   const passedTrain = state?.train;
 
   const [selectedTrain, setSelectedTrain] = useState(passedTrain || null);

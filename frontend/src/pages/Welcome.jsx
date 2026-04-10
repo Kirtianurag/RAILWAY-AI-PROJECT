@@ -28,7 +28,7 @@ const Welcome = () => {
         </p>
 
         <button
-          onClick={() => navigate("/login")}
+          onClick={() => navigate("/dashboard")}
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
           className="mt-10 px-8 py-3 bg-cyan-500 hover:bg-cyan-600 rounded-xl transition-all duration-300"
