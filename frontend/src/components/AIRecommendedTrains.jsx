@@ -64,7 +64,7 @@ const AIRecommendedTrains = () => {
           return (
           <div
             key={train.trainNo}  
-            className="min-w-[300px] max-w-[300px] min-h-[500px] h-auto flex flex-col rounded-2xl overflow-hidden bg-white/10 backdrop-blur-lg shadow-xl"
+            className="min-w-[300px] max-w-[300px] min-h-[500px] h-auto flex flex-col rounded-2xl overflow-hidden bg-white/10 backdrop-blur-lg shadow-xl hover:-translate-y-3 hover:shadow-[0_15px_30px_rgba(6,182,212,0.2)] transition-all duration-300 cursor-pointer border border-transparent hover:border-white/10"
           >
             <img
               src={train.image}
