@@ -78,7 +78,7 @@ const Dashboard = () => {
             <span className="text-cyan-400">{user ? user.name : "Guest"}</span> 👋
           </h2>
           <p className="text-gray-400 mt-2">
-            AI-powered railway booking system
+            Next-Gen Train Booking System
           </p>
         </div>
 

@@ -46,7 +46,8 @@ const Welcome = () => {
         </h1>
 
         <p className="mt-6 text-lg md:text-xl max-w-2xl mx-auto drop-shadow-md">
-          Experience the future of railway travel — smart train search, AI-powered recommendations, quick bookings, and seamless voice assistant support. Your journey begins here.
+          Bringing people closer with every journey — explore trains easily, book faster, and travel without hassle.
+Because every trip connects a story....
         </p>
 
         <button
