@@ -1,0 +1,110 @@
+[
+  {
+    "trainNo": "22436",
+    "name": "Vande Bharat Express",
+    "desc": "New Delhi - Varanasi semi-high speed train with premium amenities.",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/7/7e/22436_-_New_Delhi%E2%80%93Varanasi_Junction_-_Vande_Bharat_Express_-_Kanpur_Central_Railway_Station_-_Kanpur_20230722_100906.jpg",
+    "rating": "4.9",
+    "fare": 1800,
+    "from": "New Delhi",
+    "to": "Varanasi Jn",
+    "time": "8h 00m",
+    "days": "Daily"
+  },
+  {
+    "trainNo": "20171",
+    "name": "Vande Bharat Express",
+    "desc": "Rani Kamlapati - Hazrat Nizamuddin high speed connectivity.",
+    "image": "https://st.indiarailinfo.com/kjfdsuiemjvcya22/0/1/4/2/5684142/0/whatsappimage20230403at7145033.jpg",
+    "rating": "4.8",
+    "fare": 1650,
+    "from": "Rani Kamlapati",
+    "to": "Hazrat Nizamuddin",
+    "time": "7h 30m",
+    "days": "Mon, Tue, Wed, Fri, Sat, Sun"
+  },
+  {
+    "trainNo": "12951",
+    "name": "Mumbai Rajdhani Express",
+    "desc": "The fastest train to Mumbai with luxurious service.",
+    "image": "https://st2.indiarailinfo.com/kjfdsuiemjvcya4/0/6/4/5/3251645/1/dsc000964470959.jpg",
+    "rating": "4.7",
+    "fare": 3200,
+    "from": "New Delhi",
+    "to": "Mumbai Central",
+    "time": "15h 30m",
+    "days": "Daily"
+  },
+  {
+    "trainNo": "12001",
+    "name": "New Delhi Shatabdi Express",
+    "desc": "Daytime premium travel between Bhopal and Delhi.",
+    "image": "https://www.fabhotels.com/blog/wp-content/uploads/2019/07/Shatabdi-Express_600.jpg",
+    "rating": "4.6",
+    "fare": 1250,
+    "from": "Bhopal",
+    "to": "New Delhi",
+    "time": "7h 45m",
+    "days": "Daily"
+  },
+  {
+    "trainNo": "20607",
+    "name": "Chennai-Mysuru Vande Bharat",
+    "desc": "Premium travel in South India with high speed.",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/6/6a/5th_Vande_Bharat_Express_departing_towards_Mysuru_Jn.jpg",
+    "rating": "4.8",
+    "fare": 1400,
+    "from": "Chennai Central",
+    "to": "Mysore",
+    "time": "6h 30m",
+    "days": "Daily"
+  },
+  {
+    "trainNo": "20701",
+    "name": "Secunderabad-Tirupati Vande Bharat",
+    "desc": "Connecting major tech hubs with the holy city.",
+    "image": "https://feeds.abplive.com/onecms/images/uploaded-images/2025/01/25/eaa4e7a013974294667444f7f543bd2e17377912495911168_original.png?impolicy=abp_cdn&imwidth=320",
+    "rating": "4.9",
+    "fare": 1550,
+    "from": "Secunderabad",
+    "to": "Tirupati",
+    "time": "8h 15m",
+    "days": "Daily"
+  },
+  {
+    "trainNo": "12301",
+    "name": "Howrah Rajdhani",
+    "desc": "Legendary overnight train connecting Howrah and Delhi.",
+    "image": "https://st2.indiarailinfo.com/kjfdsuiemjvcya4/0/1/5/3/5255153/0/img202203261611164253660.jpg",
+    "rating": "4.7",
+    "fare": 3400,
+    "from": "Howrah Jn",
+    "to": "New Delhi",
+    "time": "17h 10m",
+    "days": "Daily"
+  },
+  {
+    "trainNo": "20707",
+    "name": "Secunderabad-Visakhapatnam Vande Bharat",
+    "desc": "High speed semi-high speed connectivity for coastal Andhra.",
+    "image": "https://static.toiimg.com/thumb/msid-108354807,width-1280,height-720,imgsize-1308313,resizemode-72,overlay-toi_sw,pt-32,y_pad-40/photo.jpg",
+    "rating": "4.8",
+    "fare": 1720,
+    "from": "Secunderabad",
+    "to": "Visakhapatnam",
+    "time": "8h 30m",
+    "days": "Daily"
+  },
+  {
+    "trainNo": "12392",
+    "name": "Shramjeevi Express",
+    "desc": "Superfast daily train connecting New Delhi to Rajgir.",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/d/de/Shramjeevi_express_train.jpg",
+    "rating": "4.5",
+    "fare": { "1A": 3200, "2A": 2100, "3A": 1500, "SL": 550 },
+    "from": "New Delhi",
+    "to": "Rajgir",
+    "time": "21h 10m",
+    "days": "Daily"
+  }
+]

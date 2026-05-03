@@ -3,6 +3,10 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
 import authRoutes from "./Routes/authRoutes.js";
+import aiRoutes from "./Routes/aiRoutes.js";
+import trainRoutes from "./Routes/trainRoutes.js";
+
+
 
 dotenv.config();
 
@@ -30,6 +34,10 @@ app.use(express.json());
 /* ================= ROUTES ================= */
 
 app.use("/api/auth", authRoutes);
+app.use("/api/ai", aiRoutes);
+app.use("/api/trains", trainRoutes);
+
+
 
 app.get("/", (req, res) => {
   res.send("Backend working 🚀");

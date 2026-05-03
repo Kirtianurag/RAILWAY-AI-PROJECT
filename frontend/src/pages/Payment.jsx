@@ -78,7 +78,7 @@ const Payment = () => {
           {[
             {
               name: "Visa",
-              img: "https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg",
+              img: "https://upload.wikimedia.org/wikipedia/commons/9/98/Visa_Inc._logo_%282005%E2%80%932014%29.svg",
             },
             {
               name: "Mastercard",
@@ -86,7 +86,7 @@ const Payment = () => {
             },
             {
               name: "RuPay",
-              img: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Rupay-Logo.png/1200px-Rupay-Logo.png?20200811062726",
+              img: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/RuPay.svg/1280px-RuPay.svg.png",
             },
           ].map((card) => (
             <label
@@ -118,7 +118,7 @@ const Payment = () => {
           {[
             {
               name: "PhonePe",
-              img: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/PhonePe_Logo.svg/2560px-PhonePe_Logo.svg.png",
+              img: "https://vectorseek.com/wp-content/uploads/2023/09/Phone-Pe-2020-Logo-Vector.svg-.png",
             },
             {
               name: "Razorpay UPI",

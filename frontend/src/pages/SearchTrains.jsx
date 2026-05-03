@@ -1,84 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
-/* ---------------- MOCK DATA ---------------- */
-
-const stations = [
-  "Delhi",
-  "Mumbai",
-  "Patna",
-  "Kolkata",
-  "Chennai",
-  "Bangalore",
-  "Hyderabad",
-  "Pune",
-  "Ahmedabad",
-  "Varanasi",
-];
-
-const trains = [
-  {
-    trainNo: "12951",
-    name: "Rajdhani Express",
-    from: "Delhi",
-    to: "Mumbai",
-    duration: "15h 30m",
-    fare: { "1A": 4500, "2A": 3200, "3A": 2300 },
-  },
-  {
-    trainNo: "12953",
-    name: "August Kranti Rajdhani",
-    from: "Delhi",
-    to: "Mumbai",
-    duration: "16h 00m",
-    fare: { "1A": 4700, "2A": 3300, "3A": 2400 },
-  },
-  {
-    trainNo: "12309",
-    name: "Patna Rajdhani",
-    from: "Delhi",
-    to: "Patna",
-    duration: "12h 10m",
-    fare: { "1A": 3800, "2A": 2600, "3A": 1900 },
-  },
-  {
-    trainNo: "15647",
-    name: "Lokmanya Express",
-    from: "Delhi",
-    to: "Mumbai",
-    duration: "23h 40m",
-    fare: { "1A": 3900, "2A": 2500, "3A": 1800, "SL": 520 },
-  },
-  {
-    trainNo: "19019",
-    name: "Dehradun Express",
-    from: "Delhi",
-    to: "Mumbai",
-    duration: "24h 10m",
-    fare: { "1A": 3600, "2A": 2300, "3A": 1600, "SL": 480 },
-  },
-  {
-    trainNo: "14224",
-    name: "Budhpurnima Express",
-    from: "Varanasi",
-    to: "Patna",
-    duration: "4h 10m",
-    fare: { "2A": 1300, "3A": 700, "SL": 350 },
-  },
-  {
-    trainNo: "19021",
-    name: "Saramjeevi Express",
-    from: "Delhi",
-    to: "Varanasi",
-    duration: "13h 25m",
-    fare: { "1A": 2770, "2A": 1665, "3A": 1190, "SL": 480 },
-  },
-];
 
 /* ---------------- HELPER ---------------- */
 
 const enrichTrainForBooking = (train) => {
-  const classes = Object.keys(train.fare);
+  const classes = typeof train.fare === 'object' ? Object.keys(train.fare) : ["1A", "2A", "3A", "SL"];
   const availability = {};
 
   classes.forEach((cls) => {
@@ -113,8 +39,28 @@ const SearchTrains = () => {
   const [date, setDate] = useState("");
   const [cls, setCls] = useState("1A");
   const [results, setResults] = useState([]);
+  const [stations, setStations] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const searchTrains = () => {
+  // Autocomplete stations
+  useEffect(() => {
+    const fetchStations = async () => {
+      const q = from.length > 1 ? from : (to.length > 1 ? to : "");
+      if (!q) return;
+      
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/trains/stations?q=${q}`);
+        const data = await response.json();
+        setStations(data);
+      } catch (err) {
+        console.error("Station fetch error:", err);
+      }
+    };
+    const timer = setTimeout(fetchStations, 300);
+    return () => clearTimeout(timer);
+  }, [from, to]);
+
+  const searchTrains = async () => {
     if (!from || !to || !date) {
       alert("Please fill all fields");
       return;
@@ -126,23 +72,21 @@ const SearchTrains = () => {
     }
 
     if (isPastDate(date)) {
-    alert("Please select a valid future date");
-    return;
-  }
-
-    if (!stations.includes(from) || !stations.includes(to)) {
-      alert("Please select a valid station");
+      alert("Please select a valid future date");
       return;
     }
 
-    const filtered = trains.filter(
-      (t) =>
-        t.from === from &&
-        t.to === to &&
-        t.fare[cls] !== undefined
-    );
-
-    setResults(filtered);
+    setLoading(true);
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/trains/search?from=${from}&to=${to}`);
+      const data = await response.json();
+      setResults(data);
+    } catch (err) {
+      console.error("Search error:", err);
+      alert("Failed to search trains. Is the backend running?");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -162,7 +106,7 @@ const SearchTrains = () => {
           Search Trains
         </h1>
         <p className="text-gray-400 mt-2">
-          AI powered train discovery for your journey
+          Real-time train discovery for your journey
         </p>
       </div>
 
@@ -171,21 +115,31 @@ const SearchTrains = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
 
-          <input
-            list="stations"
-            value={from}
-            onChange={(e) => setFrom(e.target.value)}
-            placeholder="From Station"
-            className="px-4 py-3 rounded-xl bg-[#020617]/80 border border-white/10 text-white placeholder-gray-400 outline-none"
-          />
+          <div className="relative">
+            <input
+              list="from-stations"
+              value={from}
+              onChange={(e) => setFrom(e.target.value)}
+              placeholder="From Station"
+              className="w-full px-4 py-3 rounded-xl bg-[#020617]/80 border border-white/10 text-white placeholder-gray-400 outline-none"
+            />
+            <datalist id="from-stations">
+              {stations.map(s => <option key={s.code} value={s.name} />)}
+            </datalist>
+          </div>
 
-          <input
-            list="stations"
-            value={to}
-            onChange={(e) => setTo(e.target.value)}
-            placeholder="To Station"
-            className="px-4 py-3 rounded-xl bg-[#020617]/80 border border-white/10 text-white placeholder-gray-400 outline-none"
-          />
+          <div className="relative">
+            <input
+              list="to-stations"
+              value={to}
+              onChange={(e) => setTo(e.target.value)}
+              placeholder="To Station"
+              className="w-full px-4 py-3 rounded-xl bg-[#020617]/80 border border-white/10 text-white placeholder-gray-400 outline-none"
+            />
+            <datalist id="to-stations">
+              {stations.map(s => <option key={s.code} value={s.name} />)}
+            </datalist>
+          </div>
 
           <input
             type="date"
@@ -207,30 +161,26 @@ const SearchTrains = () => {
 
           <button
             onClick={searchTrains}
-            className="rounded-xl font-semibold bg-gradient-to-r from-cyan-500 to-fuchsia-500 hover:scale-105 transition"
+            disabled={loading}
+            className="rounded-xl font-semibold bg-gradient-to-r from-cyan-500 to-fuchsia-500 hover:scale-105 transition disabled:opacity-50"
           >
-            Search
+            {loading ? "Searching..." : "Search"}
           </button>
         </div>
-
-        <datalist id="stations">
-          {stations.map((s) => (
-            <option key={s} value={s} />
-          ))}
-        </datalist>
       </div>
 
       {/* RESULTS */}
       <div className="max-w-6xl mx-auto mt-12 space-y-6">
 
-        {results.length === 0 && date && (
-          <p className="text-center text-yellow-400">
-            No trains available with <strong>{cls}</strong> class
+        {results.length === 0 && !loading && (
+          <p className="text-center text-gray-500">
+            Enter stations and click search to see real trains
           </p>
         )}
 
         {results.map((train) => {
           const preparedTrain = enrichTrainForBooking(train);
+          const displayFare = typeof train.fare === 'object' ? train.fare[cls] : train.fare;
 
           return (
             <div
@@ -239,7 +189,7 @@ const SearchTrains = () => {
             >
               <div>
                 <h3 className="text-2xl font-bold text-cyan-400">
-                  {train.name}
+                  {train.name} ({train.trainNo})
                 </h3>
                 <p className="text-gray-400">
                   {train.from} → {train.to} • ⏱ {train.duration}
@@ -249,7 +199,7 @@ const SearchTrains = () => {
 
               <div className="text-right">
                 <p className="text-2xl font-extrabold text-cyan-400">
-                  ₹{train.fare[cls]}
+                  ₹{displayFare || "N/A"}
                 </p>
                 <button
                   onClick={() =>

@@ -1,6 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import api from "../api";
+
+const slides = [
+  "https://images.unsplash.com/photo-1637995735729-c43250f1ef47?q=80&w=1176&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1639494095806-1680b909cb33?q=80&w=1203&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1757841239542-c29c68d4b130?q=80&w=1330&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1777556368890-66d79835c4e0?q=80&w=1172&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1726747062988-cd0b86c814e0?q=80&w=1212&auto=format&fit=crop"
+];
 
 const Login = () => {
   const navigate = useNavigate();
@@ -9,6 +17,14 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }, 5000); // Change image every 5 seconds
+    return () => clearInterval(timer);
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -17,17 +33,14 @@ const Login = () => {
 
     try {
       const res = await api.post("/auth/login", {
-        // ✅ normalize input (VERY IMPORTANT)
         email: email.trim().toLowerCase(),
         password: password.trim(),
       });
 
-      // 🔐 hard safety check
       if (!res.data?.token || !res.data?.user) {
         throw new Error("Invalid login response");
       }
 
-      // ✅ store auth data safely
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
 
@@ -37,39 +50,48 @@ const Login = () => {
       setError(
         err.response?.data?.message || "Invalid email or password"
       );
-      localStorage.clear(); // prevent corrupted storage
+      localStorage.clear();
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center bg-cover bg-center"
-      style={{
-        backgroundImage:
-          "url('https://www.railjournal.com/wp-content/uploads/2024/07/India_HS.jpg')",
-      }}
-    >
-      <div className="bg-white/90 backdrop-blur p-8 rounded-2xl w-full max-w-md shadow-xl">
-        <h2 className="text-2xl font-bold text-center mb-6">
-          Railway AI Login
+    <div className="min-h-screen relative flex items-center justify-center overflow-hidden">
+      
+      {/* Background Slideshow */}
+      {slides.map((url, i) => (
+        <div
+          key={url}
+          className={`absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ease-in-out ${
+            i === currentSlide ? "opacity-100" : "opacity-0"
+          }`}
+          style={{ backgroundImage: `url('${url}')` }}
+        />
+      ))}
+
+      {/* Dark overlay for readability */}
+      <div className="absolute inset-0 bg-black/40"></div>
+
+      <div className="relative z-10 bg-black/20 backdrop-blur-2xl backdrop-saturate-150 p-10 rounded-[2rem] w-full max-w-md shadow-[0_8px_32px_0_rgba(0,0,0,0.5)] border border-white/10 ring-1 ring-white/5">
+        <h2 className="text-4xl font-bold text-center mb-8 text-white tracking-wide">
+          RailConnect
         </h2>
 
         {error && (
-          <p className="text-red-600 text-center mb-4">
+          <p className="text-red-400 text-center mb-6 bg-red-900/40 p-3 rounded-lg border border-red-500/50">
             {error}
           </p>
         )}
 
-        <form onSubmit={handleLogin} className="space-y-4">
+        <form onSubmit={handleLogin} className="space-y-6">
           <input
             type="email"
-            placeholder="Email"
+            placeholder="Email Address"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full p-4 bg-black/20 border border-white/10 text-white placeholder-gray-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:bg-black/40 transition-all backdrop-blur-sm"
           />
 
           <input
@@ -78,27 +100,27 @@ const Login = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full p-4 bg-black/20 border border-white/10 text-white placeholder-gray-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:bg-black/40 transition-all backdrop-blur-sm"
           />
 
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-3 rounded-lg text-white transition ${
+            className={`w-full py-4 rounded-xl font-bold text-lg transition-all shadow-[0_0_15px_rgba(6,182,212,0.4)] hover:shadow-[0_0_25px_rgba(6,182,212,0.6)] ${
               loading
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-indigo-600 hover:bg-indigo-700"
+                ? "bg-gray-500 cursor-not-allowed text-white"
+                : "bg-cyan-500 hover:bg-cyan-400 text-black"
             }`}
           >
-            {loading ? "Logging in..." : "Login"}
+            {loading ? "Authenticating..." : "Sign In"}
           </button>
         </form>
 
-        <p className="text-center mt-4 text-sm">
+        <p className="text-center mt-8 text-gray-300">
           Don&apos;t have an account?{" "}
           <Link
             to="/register"
-            className="text-indigo-600 font-semibold hover:underline"
+            className="text-cyan-400 font-bold hover:text-cyan-300 hover:underline transition-all"
           >
             Create New Account
           </Link>

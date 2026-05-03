@@ -37,12 +37,12 @@ const Dashboard = () => {
         <div className="flex justify-between items-center py-6">
           <div className="flex items-center gap-3">
             <img
-              src="https://upload.wikimedia.org/wikipedia/en/thumb/8/83/Indian_Railways.svg/1200px-Indian_Railways.svg.png"
+              src="https://upload.wikimedia.org/wikipedia/en/8/83/Indian_Railways.svg"
               className="w-14 h-14 rounded-full border-2 border-cyan-400"
               alt="logo"
             />
             <h1 className="text-2xl font-bold text-cyan-400 cursor-pointer" onClick={() => navigate("/")}>
-              Indian Railway AI Dashboard
+              Indian Railway Dashboard
             </h1>
           </div>
 
@@ -102,7 +102,7 @@ const Dashboard = () => {
             }}
           />
           <InfoCard
-            title="🤖 AI Recommendations"
+            title="🚂 Train Recommendations"
             desc="Best trains for your journey"
             onClick={() =>
               navigate("/dashboard", {

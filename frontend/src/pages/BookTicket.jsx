@@ -52,17 +52,32 @@ const BookTicket = () => {
       return;
     }
 
+    const status = selectedTrain.availability?.[cls] || "AVL 10";
+    const isConfirmed = status.startsWith("AVL") || status === "CONFIRMED";
+
+    const enrichedPassengers = details.map((p, index) => {
+      let assignedSeat = "";
+      if (isConfirmed) {
+         const coach = cls === "1A" ? "H1" : cls === "2A" ? "A1" : cls === "3A" ? "B1" : "S1";
+         assignedSeat = `${coach}-${Math.floor(Math.random() * 60) + 1}`;
+      } else {
+         const [type, num] = status.split(" ");
+         assignedSeat = `${type} ${parseInt(num || "1") + index}`;
+      }
+      return { ...p, seat: assignedSeat };
+    });
+
     const bookingData = {
       trainName: selectedTrain.name,
       trainNo: selectedTrain.trainNo,
       route: `${selectedTrain.from} → ${selectedTrain.to}`,
       class: cls,
-      passengers: details,
+      passengers: enrichedPassengers,
       fare:
         typeof selectedTrain.fare === "object"
           ? selectedTrain.fare[cls]
           : selectedTrain.fare || 1500,
-      status: selectedTrain.availability?.[cls] || "CONFIRMED",
+      status: status,
       date: new Date().toISOString().split("T")[0],
       pnr: Math.floor(1000000000 + Math.random() * 9000000000),
     };

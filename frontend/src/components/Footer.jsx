@@ -111,7 +111,7 @@ const Footer = () => {
         <p>© 2025 Intelligent Railway Booking System. All Rights Reserved.</p>
 
         <div className="flex gap-4 mt-3 md:mt-0">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg" className="h-6" />
+          <img src="https://upload.wikimedia.org/wikipedia/commons/9/98/Visa_Inc._logo_%282005%E2%80%932014%29.svg" className="h-6" />
           <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" className="h-6" />
           <img src="https://upload.wikimedia.org/wikipedia/commons/d/d1/RuPay.svg" className="h-6" />
         </div>
