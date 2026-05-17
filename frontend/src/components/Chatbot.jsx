@@ -8,7 +8,7 @@ const Chatbot = () => {
   return (
     <>
       {open && <ChatbotWindow onClose={() => setOpen(false)} />}
-      <ChatbotButton onClick={() => setOpen(!open)} />
+      <ChatbotButton open={open} onClick={() => setOpen(!open)} />
     </>
   );
 };

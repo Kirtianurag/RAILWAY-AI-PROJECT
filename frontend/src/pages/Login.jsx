@@ -26,6 +26,8 @@ const Login = () => {
     return () => clearInterval(timer);
   }, []);
 
+  const previousSlide = (currentSlide - 1 + slides.length) % slides.length;
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
@@ -57,70 +59,126 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen relative flex items-center justify-center overflow-hidden">
+    <div className="min-h-screen relative flex items-center justify-center overflow-hidden font-sans">
       
-      {/* Background Slideshow */}
+      {/* Background Slideshow: Dual-Layered Crossfade (Zero Dimming or Hiding Flashes) */}
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: `url('${slides[previousSlide]}')` }}
+      />
       {slides.map((url, i) => (
         <div
           key={url}
           className={`absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ease-in-out ${
-            i === currentSlide ? "opacity-100" : "opacity-0"
+            i === currentSlide ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"
           }`}
           style={{ backgroundImage: `url('${url}')` }}
         />
       ))}
 
       {/* Dark overlay for readability */}
-      <div className="absolute inset-0 bg-black/40"></div>
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/55 to-slate-950/45 z-10"></div>
 
-      <div className="relative z-10 bg-black/20 backdrop-blur-2xl backdrop-saturate-150 p-10 rounded-[2rem] w-full max-w-md shadow-[0_8px_32px_0_rgba(0,0,0,0.5)] border border-white/10 ring-1 ring-white/5">
-        <h2 className="text-4xl font-bold text-center mb-8 text-white tracking-wide">
+      {/* BACK TO WELCOME SCREEN BUTTON */}
+      <div className="absolute top-6 left-6 z-20">
+        <button
+          onClick={() => navigate("/")}
+          className="text-white hover:text-cyan-400 transition-colors flex items-center gap-2 text-xs uppercase tracking-wider font-black cursor-pointer bg-slate-955/80 px-4 py-2.5 rounded-xl border border-white/20 backdrop-blur-md shadow-lg"
+        >
+          ← Home
+        </button>
+      </div>
+
+      {/* REGISTER SHORTCUT TOP RIGHT */}
+      <div className="absolute top-6 right-6 z-20">
+        <button
+          onClick={() => navigate("/register")}
+          className="px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-600 text-black font-black transition text-xs uppercase tracking-wider shadow-[0_0_15px_rgba(6,182,212,0.4)] cursor-pointer"
+        >
+          Sign Up
+        </button>
+      </div>
+
+      {/* GORGEOUS FROSTED GLASS LOGIN CARD */}
+      <div className="relative z-20 bg-slate-950/80 backdrop-blur-xl border border-white/20 p-10 rounded-[2.5rem] w-full max-w-md shadow-[0_20px_50px_rgba(0,0,0,0.6)] mx-4">
+        
+        {/* Emblem */}
+        <div className="flex justify-center mb-4">
+          <img
+            src="https://upload.wikimedia.org/wikipedia/en/8/83/Indian_Railways.svg"
+            className="w-16 h-16 rounded-full border border-cyan-400/30 p-1 bg-slate-900/90 shadow-[0_0_15px_rgba(6,182,212,0.2)]"
+            alt="Indian Railways"
+          />
+        </div>
+
+        <h2 className="text-3xl font-black text-center mb-1 text-white tracking-widest uppercase bg-gradient-to-r from-cyan-400 via-sky-400 to-indigo-400 bg-clip-text text-transparent">
           RailConnect
         </h2>
+        <p className="text-[9px] text-center font-black text-cyan-400 tracking-widest uppercase mb-8">
+          Sign In to Travel Console
+        </p>
 
         {error && (
-          <p className="text-red-400 text-center mb-6 bg-red-900/40 p-3 rounded-lg border border-red-500/50">
+          <p className="text-rose-400 text-xs font-semibold text-center mb-6 bg-rose-950/60 p-3 rounded-xl border border-rose-500/30 leading-relaxed">
             {error}
           </p>
         )}
 
-        <form onSubmit={handleLogin} className="space-y-6">
-          <input
-            type="email"
-            placeholder="Email Address"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="w-full p-4 bg-black/20 border border-white/10 text-white placeholder-gray-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:bg-black/40 transition-all backdrop-blur-sm"
-          />
+        <form onSubmit={handleLogin} className="space-y-5">
+          
+          {/* Email Address with Left Icon */}
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-300">
+              <svg className="w-5 h-5 text-slate-350" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.206" />
+              </svg>
+            </div>
+            <input
+              type="email"
+              placeholder="Email Address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full pl-12 pr-4 py-4 bg-slate-950/50 border border-white/20 text-white placeholder-slate-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent focus:bg-slate-950/80 transition-all font-semibold text-sm"
+            />
+          </div>
 
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className="w-full p-4 bg-black/20 border border-white/10 text-white placeholder-gray-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:bg-black/40 transition-all backdrop-blur-sm"
-          />
+          {/* Password with Left Icon */}
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-300">
+              <svg className="w-5 h-5 text-slate-350" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </div>
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full pl-12 pr-4 py-4 bg-slate-950/50 border border-white/20 text-white placeholder-slate-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent focus:bg-slate-950/80 transition-all font-semibold text-sm"
+            />
+          </div>
 
+          {/* Submit Trigger */}
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-4 rounded-xl font-bold text-lg transition-all shadow-[0_0_15px_rgba(6,182,212,0.4)] hover:shadow-[0_0_25px_rgba(6,182,212,0.6)] ${
+            className={`w-full py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_30px_rgba(6,182,212,0.6)] cursor-pointer hover:scale-102 active:scale-98 ${
               loading
-                ? "bg-gray-500 cursor-not-allowed text-white"
+                ? "bg-slate-700 cursor-not-allowed text-slate-400"
                 : "bg-cyan-500 hover:bg-cyan-400 text-black"
             }`}
           >
-            {loading ? "Authenticating..." : "Sign In"}
+            {loading ? "Authenticating..." : "Sign In Now"}
           </button>
         </form>
 
-        <p className="text-center mt-8 text-gray-300">
+        <p className="text-center mt-8 text-xs text-white font-semibold">
           Don&apos;t have an account?{" "}
           <Link
             to="/register"
-            className="text-cyan-400 font-bold hover:text-cyan-300 hover:underline transition-all"
+            className="text-cyan-400 font-bold hover:text-cyan-300 transition-colors"
           >
             Create New Account
           </Link>

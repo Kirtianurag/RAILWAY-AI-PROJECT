@@ -1,101 +1,51 @@
 import React, { useState, useEffect, useRef } from "react";
 
-const ChatbotWindow = () => {
-  const [isOpen, setIsOpen] = useState(true);
+const ChatbotWindow = ({ onClose }) => {
   const [messages, setMessages] = useState([
     {
       sender: "bot",
-      text: "👋 Welcome! Try: Mumbai to Delhi or train number like 12951",
+      text: "Welcome to RailConnect! Try asking: trains from Delhi to Mumbai, or status of PNR 1234567890.",
     },
   ]);
   const [input, setInput] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
 
   const chatEndRef = useRef(null);
   const recognitionRef = useRef(null);
 
-  // =========================
-  // TRAIN DATA
-  // =========================
-  const trains = []; 
-
-
-  // =========================
-  // AUTO SCROLL
-  // =========================
+  // Auto scroll
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-// =========================
-// SPEECH RECOGNITION
-// =========================
-useEffect(() => {
-  const SpeechRecognition =
-    window.SpeechRecognition || window.webkitSpeechRecognition;
+  // Speech Recognition
+  useEffect(() => {
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
 
-  if (!SpeechRecognition) {
-    alert("Speech recognition not supported. Use Google Chrome.");
-    return;
-  }
+    if (!SpeechRecognition) return;
 
-  const recognition = new SpeechRecognition();
+    const recognition = new SpeechRecognition();
+    recognition.lang = "en-IN";
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
 
-  recognition.lang = "en-IN";
-  recognition.continuous = true;        // 👈 IMPORTANT CHANGE
-  recognition.interimResults = false;
-  recognition.maxAlternatives = 1;
+    recognition.onresult = (event) => {
+      const transcript = event.results[event.results.length - 1][0].transcript;
+      setInput(transcript);
+      recognition.stop();
+    };
 
-  recognition.onstart = () => {
-    console.log("🎤 Listening...");
-  };
+    recognitionRef.current = recognition;
+  }, []);
 
-  recognition.onresult = (event) => {
-    const transcript = event.results[event.results.length - 1][0].transcript;
-    console.log("Voice detected:", transcript);
-
-    setInput(transcript);
-
-    recognition.stop();   // 👈 stop after getting result
-  };
-
-  recognition.onerror = (event) => {
-    console.log("Speech error:", event.error);
-
-    if (event.error === "no-speech") {
-      console.log("No speech detected. Try speaking louder.");
+  const startListening = () => {
+    if (recognitionRef.current) {
+      recognitionRef.current.start();
     }
   };
 
-  recognition.onend = () => {
-    console.log("🎤 Stopped");
-  };
-
-  recognitionRef.current = recognition;
-}, []);
-
-const startListening = () => {
-  if (recognitionRef.current) {
-    recognitionRef.current.start();
-  }
-};
-
-
-
-  // const startListening = () => {
-  //   if (recognitionRef.current) {
-  //     recognitionRef.current.start();
-  //   }
-  // };
-
-
-  // =========================
-  // SEND MESSAGE
-  // =========================
-  const [isTyping, setIsTyping] = useState(false);
-
-  // =========================
-  // SEND MESSAGE
-  // =========================
   const sendMessage = async () => {
     if (!input.trim() || isTyping) return;
 
@@ -123,75 +73,92 @@ const startListening = () => {
       console.error("Chat Error:", error);
       setMessages((prev) => [
         ...prev,
-        { sender: "bot", text: "❌ Connection error. Is the backend running?" },
+        { sender: "bot", text: "Connection error. Is the backend running?" },
       ]);
     } finally {
       setIsTyping(false);
     }
   };
 
-
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed bottom-20 right-6 w-96 bg-white rounded-xl shadow-2xl flex flex-col">
+    <div className="fixed bottom-24 right-6 w-96 bg-[#172031]/95 border border-slate-800/95 rounded-2xl shadow-2xl flex flex-col z-50 overflow-hidden backdrop-blur-xl transition-all duration-300">
+      
       {/* HEADER */}
-      <div className="bg-blue-600 text-white p-3 font-bold rounded-t-xl flex justify-between">
-        🚆 RailConnect Assistant
-        <button onClick={() => setIsOpen(false)}>❌</button>
+      <div className="bg-[#1e293b]/95 border-b border-slate-800/80 text-cyan-400 p-4 font-black text-xs tracking-wider uppercase flex justify-between items-center select-none">
+        <span className="flex items-center gap-2">
+          <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></span>
+          RailConnect Assistant
+        </span>
+        <button 
+          onClick={onClose}
+          className="text-slate-400 hover:text-slate-200 transition text-sm cursor-pointer select-none"
+        >
+          ✕
+        </button>
       </div>
 
       {/* CHAT AREA */}
-      <div className="flex-1 overflow-y-auto p-3 space-y-2 text-sm max-h-96">
-        {messages.map((msg, index) => (
-          <div
-            key={index}
-            className={`p-2 rounded-lg ${
-              msg.sender === "user"
-                ? "bg-blue-500 text-white self-end"
-                : "bg-gray-200 text-black"
-            }`}
-          >
-            {msg.text}
-          </div>
-        ))}
+      <div className="flex-1 overflow-y-auto p-4 space-y-3 text-xs max-h-80 min-h-[260px] no-scrollbar">
+        {messages.map((msg, index) => {
+          const isUser = msg.sender === "user";
+          return (
+            <div
+              key={index}
+              className={`flex ${isUser ? "justify-end" : "justify-start"}`}
+            >
+              <div
+                className={`max-w-[80%] p-3 rounded-2xl font-semibold leading-relaxed shadow-sm ${
+                  isUser
+                    ? "bg-cyan-500 text-white rounded-tr-none"
+                    : "bg-[#0e1220] text-slate-100 border border-slate-850 rounded-tl-none"
+                }`}
+              >
+                {msg.text}
+              </div>
+            </div>
+          );
+        })}
         {isTyping && (
-          <div className="p-2 rounded-lg bg-gray-100 text-gray-500 italic animate-pulse">
-            AI is thinking...
+          <div className="flex justify-start">
+            <div className="bg-[#0e1220] text-slate-400 border border-slate-850 rounded-2xl rounded-tl-none p-3 italic animate-pulse">
+              AI Assistant is thinking...
+            </div>
           </div>
         )}
         <div ref={chatEndRef}></div>
       </div>
 
       {/* INPUT AREA */}
-      <div className="flex p-2 border-t">
+      <div className="p-3 border-t border-slate-800/80 bg-[#0e1220]/50 flex items-center gap-2">
         <input
           type="text"
-          className="flex-1 border rounded px-2 py-1"
-          placeholder="Search train..."
+          className="flex-1 bg-[#0e1220] border border-slate-800 focus:border-cyan-500/80 transition text-white px-3 py-2 rounded-xl text-xs font-semibold placeholder-slate-500 outline-none"
+          placeholder="Ask RailConnect Assistant..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && sendMessage()}
         />
 
+        {/* Vector SVG Mic */}
         <button
-  onClick={startListening}
-  className="mx-2 bg-gray-300 p-2 rounded flex items-center justify-center"
->
-  <img
-    src="https://i.fbcd.co/products/original/a7f5a253d2b3ff0e994ecbac333f8a406bf598d27f812e18e69070fc1d4ddf4e.jpg"
-    alt="Mic"
-    className="w-5 h-5 object-cover"
-  />
-</button>
+          onClick={startListening}
+          className="bg-[#172031] border border-slate-800 hover:border-slate-700 p-2.5 rounded-xl transition flex items-center justify-center cursor-pointer"
+          title="Voice Search"
+        >
+          <svg className="w-4 h-4 text-slate-400 hover:text-slate-200 transition" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/>
+          </svg>
+        </button>
 
+        {/* Send Button */}
         <button
           onClick={sendMessage}
-          className="bg-green-600 text-white px-4 rounded"
+          className="bg-cyan-500 hover:bg-cyan-600 transition text-white font-bold px-4 py-2 rounded-xl text-xs uppercase tracking-wider shadow cursor-pointer"
         >
           Send
         </button>
       </div>
+
     </div>
   );
 };
