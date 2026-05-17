@@ -38,7 +38,7 @@ export const chatWithAI = async (req, res) => {
 
   } catch (error) {
     console.error("GEMINI CHAT ERROR:", error.response?.data || error.message);
-    
+
     const status = error.response?.status;
     const detail = error.response?.data?.error?.message || "";
 

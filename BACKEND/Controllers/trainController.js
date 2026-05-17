@@ -37,18 +37,18 @@ const getTrainImage = (name) => {
 // Helper: Dynamically determines correct traveling classes and fares based on real Indian Railway rules
 const getTrainClassesAndFares = (trainName, rawFare) => {
   const name = trainName.toLowerCase();
-  
+
   // 1. Vande Bharat, Shatabdi, Tejas
   if (name.includes("vande bharat") || name.includes("shatabdi") || name.includes("tejas")) {
     const classes = ["CC", "EC"];
     let ccBase = 950;
     let ecBase = 1700;
-    
+
     if (rawFare && typeof rawFare === "object") {
       ccBase = rawFare["CC"] || rawFare["SL"] * 2.2 || rawFare["3A"] * 0.8 || 950;
       ecBase = rawFare["EC"] || ccBase * 1.8 || 1700;
     }
-    
+
     return {
       classes,
       fare: {
@@ -57,20 +57,20 @@ const getTrainClassesAndFares = (trainName, rawFare) => {
       }
     };
   }
-  
+
   // 2. Rajdhani
   if (name.includes("rajdhani")) {
     const classes = ["3A", "2A", "1A"];
     let base3A = 1600;
     let base2A = 2300;
     let base1A = 3400;
-    
+
     if (rawFare && typeof rawFare === "object") {
       base3A = rawFare["3A"] || rawFare["SL"] * 2.8 || 1600;
       base2A = rawFare["2A"] || base3A * 1.45 || 2300;
       base1A = rawFare["1A"] || base3A * 2.15 || 3400;
     }
-    
+
     return {
       classes,
       fare: {
@@ -80,21 +80,21 @@ const getTrainClassesAndFares = (trainName, rawFare) => {
       }
     };
   }
-  
+
   // 3. Default Mail / Express / Superfast
   const classes = ["SL", "3A", "2A", "1A"];
   let baseSL = 450;
   let base3A = 1200;
   let base2A = 1700;
   let base1A = 2400;
-  
+
   if (rawFare && typeof rawFare === "object") {
     baseSL = rawFare["SL"] || 450;
     base3A = rawFare["3A"] || baseSL * 2.6 || 1200;
     base2A = rawFare["2A"] || baseSL * 3.7 || 1700;
     base1A = rawFare["1A"] || baseSL * 5.3 || 2400;
   }
-  
+
   return {
     classes,
     fare: {
@@ -110,14 +110,14 @@ const getTrainClassesAndFares = (trainName, rawFare) => {
 export const searchStations = (req, res) => {
   const { q } = req.query;
   const stations = getStations();
-  
+
   if (!q) return res.json(stations.slice(0, 10)); // Top 10 by default
 
-  const filtered = stations.filter(s => 
-    s.name.toLowerCase().includes(q.toLowerCase()) || 
+  const filtered = stations.filter(s =>
+    s.name.toLowerCase().includes(q.toLowerCase()) ||
     s.code.toLowerCase().includes(q.toLowerCase())
   );
-  
+
   res.json(filtered.slice(0, 10)); // Return top 10 matches
 };
 
@@ -144,27 +144,27 @@ export const searchTrainsBetweenStations = async (req, res) => {
   const isGibberish = (str) => {
     const s = str.toLowerCase().trim();
     if (s.length < 3) return true;
-    
+
     // Check for non-alphabetic characters (except spaces or hyphen)
     if (/[^a-z\s\-]/i.test(s)) return true;
-    
+
     // Check if it matches any station code in our local database (e.g. NDLS, HWH, CSMT)
     const isStationCode = getStations().some(st => st.code.toLowerCase() === s);
     if (isStationCode) return false;
-    
+
     // If it has no vowels and is not a known station code, it's gibberish (e.g. "zxcv")
     if (!/[aeiouy]/i.test(s)) return true;
-    
+
     // If it has weird consonant clusters of 4+ consonants in a row (excluding spaces)
     const normalized = s.replace(/\s+/g, '');
     if (/[bcdfghjklmnpqrstvwxz]{4,}/i.test(normalized)) return true;
-    
+
     return false;
   };
 
   if (isGibberish(cleanFrom) || isGibberish(cleanTo)) {
-    return res.status(400).json({ 
-      error: `🚨 Invalid Stations: "${from}" or "${to}" is not a recognized railway station. Please enter valid station names (e.g. Varanasi, New Delhi).` 
+    return res.status(400).json({
+      error: `🚨 Invalid Stations: "${from}" or "${to}" is not a recognized railway station. Please enter valid station names (e.g. Varanasi, New Delhi).`
     });
   }
 
@@ -212,7 +212,7 @@ export const searchTrainsBetweenStations = async (req, res) => {
   if (apiKey) {
     try {
       const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`;
-      
+
       const prompt = `You are a strict Indian Railway Database Assistant.
 First, check if both of the entered stations are real, recognized railway stations, cities, or towns in India:
 Source: "${from}"
@@ -248,20 +248,20 @@ Return ONLY the raw parseable JSON (either the invalid object or the array of tr
 
       if (response.data && response.data.candidates) {
         let text = response.data.candidates[0].content.parts[0].text.trim();
-        
+
         // Clean markdown block wrappers if model outputs them
         if (text.startsWith("```json")) {
           text = text.substring(7);
         } else if (text.startsWith("```")) {
           text = text.substring(3);
         }
-        
+
         if (text.endsWith("```")) {
           text = text.substring(0, text.length - 3);
         }
-        
+
         text = text.trim();
-        
+
         const parsedResult = JSON.parse(text);
 
         // Handle case where Gemini flagged invalid stations
@@ -272,7 +272,7 @@ Return ONLY the raw parseable JSON (either the invalid object or the array of tr
 
         const parsedTrains = parsedResult;
         if (Array.isArray(parsedTrains) && parsedTrains.length > 0) {
-          
+
           // POST-PROCESSING: Map user custom train images and dynamic classes/fares based on real railway rules
           parsedTrains.forEach(t => {
             const mapped = getTrainClassesAndFares(t.name, t.fare);
@@ -293,7 +293,7 @@ Return ONLY the raw parseable JSON (either the invalid object or the array of tr
 
   // If Gemini API is missing or fails, send clean realistic fallback with direct Unsplash images and stops
   console.log(`Using high-res simulated train data fallback for ${from} -> ${to}`);
-  
+
   const fallback = getFallbackSimulated();
   fallback.forEach(t => {
     t.image = getTrainImage(t.name);
@@ -326,8 +326,8 @@ export const getSeatAvailability = async (req, res) => {
   };
 
   if (isGibberish(cleanFrom) || isGibberish(cleanTo)) {
-    return res.status(400).json({ 
-      error: `🚨 Invalid Stations: "${from}" or "${to}" is not a recognized railway station. Please enter valid station names.` 
+    return res.status(400).json({
+      error: `🚨 Invalid Stations: "${from}" or "${to}" is not a recognized railway station. Please enter valid station names.`
     });
   }
 
@@ -378,7 +378,7 @@ export const getSeatAvailability = async (req, res) => {
   if (apiKey) {
     try {
       const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`;
-      
+
       const prompt = `You are a real-time Indian Railway Seat Availability system.
 For the route: '${from}' to '${to}' on travel date: '${date}'.
 Please retrieve a JSON array of up to 5 real or highly realistic trains operating between these stations on this date.
@@ -402,19 +402,19 @@ Return ONLY the raw parseable JSON array. Do not wrap it in markdown code blocks
 
       if (response.data && response.data.candidates) {
         let text = response.data.candidates[0].content.parts[0].text.trim();
-        
+
         if (text.startsWith("```json")) {
           text = text.substring(7);
         } else if (text.startsWith("```")) {
           text = text.substring(3);
         }
-        
+
         if (text.endsWith("```")) {
           text = text.substring(0, text.length - 3);
         }
-        
+
         text = text.trim();
-        
+
         const parsedResult = JSON.parse(text);
         if (Array.isArray(parsedResult) && parsedResult.length > 0) {
           console.log(`Successfully fetched ${parsedResult.length} seat availabilities from Gemini prompt for ${from} -> ${to}`);
@@ -450,7 +450,7 @@ const alignHaltsToCurrentTime = (data) => {
   // 1. Calculate day offset wrap factors (e.g. crossing midnight)
   let dayOffset = 0;
   let prevMins = parseTime(data.halts[0].scheduledArrival);
-  
+
   data.halts.forEach((halt, idx) => {
     let mins = parseTime(halt.scheduledArrival);
     if (idx > 0 && mins < prevMins) {
@@ -476,12 +476,12 @@ const alignHaltsToCurrentTime = (data) => {
   // 3. Process departed vs upcoming halts cleanly based on time
   data.halts.forEach((halt, idx) => {
     const actMins = halt.absMins + delay;
-    
+
     // Reformat actMins back to HH:MM format
     const actH = Math.floor((actMins % 1440) / 60).toString().padStart(2, "0");
     const actM = Math.floor(actMins % 60).toString().padStart(2, "0");
     halt.actualArrival = `${actH}:${actM}`;
-    
+
     halt.delay = delay;
 
     if (currentMins >= actMins) {
@@ -497,7 +497,7 @@ const alignHaltsToCurrentTime = (data) => {
     data.halts[0].status = "DEPARTED";
     lastDepartedIdx = 0;
   }
-  
+
   if (lastDepartedIdx === data.halts.length - 1) {
     data.halts[data.halts.length - 1].status = "UPCOMING";
     lastDepartedIdx = data.halts.length - 2;
@@ -506,7 +506,7 @@ const alignHaltsToCurrentTime = (data) => {
   // 4. Synthesize logical heading status
   const currentHalt = data.halts[lastDepartedIdx];
   const nextHalt = data.halts[lastDepartedIdx + 1];
-  
+
   if (nextHalt) {
     data.currentStation = `Departed ${currentHalt.stationName}, heading to ${nextHalt.stationName}`;
     if (!data.positionStatus) {
