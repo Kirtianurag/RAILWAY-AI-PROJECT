@@ -145,8 +145,17 @@ const Dashboard = () => {
 
         {/* ================= RAILWAY SERVICES ================= */}
         <div className="mt-20">
-          <h2 className="text-xl font-black mb-8 flex items-center gap-2 uppercase tracking-widest text-slate-350 select-none">
-            🚆 Railway Services
+          <h2 className="text-xl font-black mb-8 flex items-center gap-3.5 uppercase tracking-widest text-slate-100 select-none">
+            <svg className="w-6 h-6 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="4" y="3" width="16" height="16" rx="2" />
+              <path d="M4 11h16" />
+              <path d="M12 3v8" />
+              <path d="M8 15h.01" />
+              <path d="M16 15h.01" />
+              <path d="m6 19-2 2" />
+              <path d="m18 19 2 2" />
+            </svg>
+            Railway Services
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
