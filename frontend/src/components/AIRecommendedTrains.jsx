@@ -99,7 +99,7 @@ const AIRecommendedTrains = () => {
     });
   };
 
-  if (loading) return <div className="mt-20 text-center text-cyan-400 animate-pulse">🤖 AI is curating recommendations...</div>;
+  if (loading) return <div className="mt-20 text-center text-cyan-400 animate-pulse">🤖 AI is creating recommendations...</div>;
 
   return (
     <div className="mt-20">
@@ -107,7 +107,7 @@ const AIRecommendedTrains = () => {
         <svg className="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" d="M5 22h14M5 2h14M19 6H5a3 3 0 00-3 3v8a3 3 0 003 3h14a3 3 0 003-3V9a3 3 0 00-3-3zM8 6V4h8v2M8 12a1 1 0 100 2 1 1 0 000-2zm8 0a1 1 0 100 2 1 1 0 000-2z" />
         </svg>
-        AI Recommended Trains
+        Recommended Trains
       </h2>
 
       <div className="flex gap-6 overflow-x-auto pb-4 no-scrollbar">
