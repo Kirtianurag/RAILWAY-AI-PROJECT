@@ -211,7 +211,7 @@ export const searchTrainsBetweenStations = async (req, res) => {
   // 2. Combined Validation & Train Search (ONE Single Call to Gemini - Saves 50% Quota!)
   if (apiKey) {
     try {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`;
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${apiKey}`;
 
       const prompt = `You are a strict Indian Railway Database Assistant.
 First, check if both of the entered stations are real, recognized railway stations, cities, or towns in India:
@@ -377,7 +377,7 @@ export const getSeatAvailability = async (req, res) => {
 
   if (apiKey) {
     try {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`;
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${apiKey}`;
 
       const prompt = `You are a real-time Indian Railway Seat Availability system.
 For the route: '${from}' to '${to}' on travel date: '${date}'.
@@ -592,7 +592,7 @@ export const getLiveTrainStatus = async (req, res) => {
 
   if (apiKey) {
     try {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`;
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${apiKey}`;
 
       const prompt = `You are a real-time Indian Railway Live Running Status assistant.
 For train number: '${cleanTrainNo}'.
