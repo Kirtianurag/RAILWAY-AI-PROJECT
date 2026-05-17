@@ -20,8 +20,8 @@ export const chatWithAI = async (req, res) => {
       });
     }
 
-    // Using gemini-2.5-flash-lite for active free tier limits
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${apiKey}`;
+    // Using gemini-2.5-flash for stable production and maximum accuracy
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
 
     const response = await axios.post(url, {
       contents: [{
