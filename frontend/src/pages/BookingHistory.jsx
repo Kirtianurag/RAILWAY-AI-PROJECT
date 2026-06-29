@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../api";
 
 const BookingHistory = () => {
   const navigate = useNavigate();
@@ -12,17 +13,43 @@ const BookingHistory = () => {
       navigate("/login");
       return;
     }
-    const stored = JSON.parse(localStorage.getItem("bookings")) || [];
-    setBookings(stored);
+
+    const fetchBookings = async () => {
+      try {
+        const res = await api.get("/bookings");
+        setBookings(res.data);
+      } catch (err) {
+        console.error("Fetch bookings error:", err);
+        // Fallback to localStorage
+        const stored = JSON.parse(localStorage.getItem("bookings")) || [];
+        setBookings(stored);
+      }
+    };
+
+    fetchBookings();
   }, [navigate]);
 
-  const cancelBooking = (pnr) => {
-    const updated = bookings.map((b) =>
-      b.pnr === pnr ? { ...b, status: "CANCELLED", cancelled: true } : b
-    );
+  const cancelBooking = async (pnr) => {
+    try {
+      const res = await api.put(`/bookings/${pnr}/cancel`);
+      const updatedBooking = res.data.booking;
 
-    setBookings(updated);
-    localStorage.setItem("bookings", JSON.stringify(updated));
+      const updated = bookings.map((b) =>
+        b.pnr === pnr ? updatedBooking : b
+      );
+
+      setBookings(updated);
+
+      // Keep localStorage fallback in sync
+      const history = JSON.parse(localStorage.getItem("bookings")) || [];
+      const updatedHistory = history.map((b) =>
+        b.pnr === pnr ? updatedBooking : b
+      );
+      localStorage.setItem("bookings", JSON.stringify(updatedHistory));
+    } catch (err) {
+      console.error("Cancel booking error:", err);
+      alert(err.response?.data?.message || "Failed to cancel booking. Please try again.");
+    }
   };
 
   // Emojis stripper utility to clean database values (e.g. seat graphics like 🤾‍♂️)

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../api";
 
 /* ================= BERTH RULES (CORRECT) ================= */
 const berthByClass = {
@@ -91,7 +92,31 @@ const PNRStatus = () => {
     return city.substring(0, Math.min(4, city.length)).toUpperCase();
   };
 
-  const checkPNR = () => {
+  const displayBooking = (match) => {
+    const routeParts = match.route ? match.route.split(/➔|→|->/) : [];
+    const fromCity = match.from || routeParts[0]?.trim() || "New Delhi";
+    const toCity = match.to || routeParts[1]?.trim() || "Varanasi";
+
+    const mappedResult = {
+      trainName: match.trainName,
+      trainNo: match.trainNo,
+      from: fromCity,
+      to: toCity,
+      route: `${fromCity} → ${toCity}`,
+      date: match.date,
+      class: match.class,
+      pnr: match.pnr,
+      cancelled: match.cancelled || match.status === "CANCELLED",
+      passengers: (match.passengers || []).map((p) => ({
+        name: p.name,
+        status: match.cancelled || match.status === "CANCELLED" ? "CANCELLED" : "CONFIRMED",
+        berth: p.seat || "UB",
+      })),
+    };
+    setResult(mappedResult);
+  };
+
+  const checkPNR = async () => {
     setError("");
     setResult(null);
 
@@ -102,36 +127,24 @@ const PNRStatus = () => {
       return;
     }
 
-    // 1. Query dynamic localStorage bookings first
+    try {
+      const res = await api.get(`/bookings/${cleanPnr}`);
+      if (res.data) {
+        displayBooking(res.data);
+        return;
+      }
+    } catch (err) {
+      console.warn("PNR lookup on database failed, attempting localStorage fallback...", err);
+    }
+
+    // Fallback to localStorage
     const stored = JSON.parse(localStorage.getItem("bookings")) || [];
     const localMatch = stored.find((b) => String(b.pnr).trim() === cleanPnr);
 
     if (localMatch) {
-      const routeParts = localMatch.route ? localMatch.route.split(/➔|→|->/) : [];
-      const fromCity = localMatch.from || routeParts[0]?.trim() || "New Delhi";
-      const toCity = localMatch.to || routeParts[1]?.trim() || "Varanasi";
-
-      const mappedResult = {
-        trainName: localMatch.trainName,
-        trainNo: localMatch.trainNo,
-        from: fromCity,
-        to: toCity,
-        route: `${fromCity} → ${toCity}`,
-        date: localMatch.date,
-        class: localMatch.class,
-        pnr: localMatch.pnr,
-        cancelled: localMatch.cancelled || localMatch.status === "CANCELLED",
-        passengers: (localMatch.passengers || []).map((p) => ({
-          name: p.name,
-          status: localMatch.cancelled || localMatch.status === "CANCELLED" ? "CANCELLED" : "CONFIRMED",
-          berth: p.seat || "UB",
-        })),
-      };
-      setResult(mappedResult);
+      displayBooking(localMatch);
       return;
     }
-
-
 
     setError("🚨 Invalid PNR: This PNR has not been generated yet. Please enter a valid booked PNR.");
   };

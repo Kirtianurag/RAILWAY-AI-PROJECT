@@ -1,5 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import api from "../api";
 
 const Payment = () => {
   const { state } = useLocation();
@@ -38,7 +39,7 @@ const Payment = () => {
   const convenienceFee = 20; // Mockup: ₹20.00
   const totalFare = baseFareTotal + superfastCharge + convenienceFee;
 
-  const completePayment = () => {
+  const completePayment = async () => {
     if (method === "Card") {
       if (!cardNumber || !cardCvv) {
         alert("Please enter secure card details to proceed");
@@ -59,16 +60,24 @@ const Payment = () => {
       bookedAt: new Date().toLocaleString(),
     };
 
-    const history = JSON.parse(localStorage.getItem("bookings")) || [];
-    const alreadyExists = history.some(b => b.pnr === finalTicket.pnr);
+    try {
+      const res = await api.post("/bookings", finalTicket);
+      const savedBooking = res.data.booking;
 
-    if (!alreadyExists) {
-      localStorage.setItem("bookings", JSON.stringify([...history, finalTicket]));
+      // Keep localStorage in sync for offline fallback/backward compatibility
+      const history = JSON.parse(localStorage.getItem("bookings")) || [];
+      const alreadyExists = history.some(b => b.pnr === savedBooking.pnr);
+      if (!alreadyExists) {
+        localStorage.setItem("bookings", JSON.stringify([...history, savedBooking]));
+      }
+
+      navigate("/ticket", {
+        state: { booking: savedBooking },
+      });
+    } catch (err) {
+      console.error("Booking error:", err);
+      alert(err.response?.data?.message || "Failed to save booking. Please try again.");
     }
-
-    navigate("/ticket", {
-      state: { booking: finalTicket },
-    });
   };
 
   return (

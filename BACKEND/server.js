@@ -5,6 +5,7 @@ import cors from "cors";
 import authRoutes from "./Routes/authRoutes.js";
 import aiRoutes from "./Routes/aiRoutes.js";
 import trainRoutes from "./Routes/trainRoutes.js";
+import bookingRoutes from "./Routes/bookingRoutes.js";
 
 
 
@@ -36,6 +37,7 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/trains", trainRoutes);
+app.use("/api/bookings", bookingRoutes);
 
 
 
