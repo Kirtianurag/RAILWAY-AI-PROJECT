@@ -67,7 +67,7 @@ const Welcome = () => {
         {/* Glowing Indian Railways Logo */}
         <div className="flex justify-center mb-6">
           <img
-            src="https://upload.wikimedia.org/wikipedia/en/8/83/Indian_Railways.svg"
+            src="https://upload.wikimedia.org/wikipedia/hi/7/7b/Indian_Railways_logo.png"
             className="w-20 h-20 rounded-full border-2 border-cyan-400/40 p-1 bg-slate-900/90 shadow-[0_0_25px_rgba(6,182,212,0.35)] animate-pulse"
             alt="Indian Railways Logo"
           />

@@ -36,7 +36,7 @@ const Dashboard = () => {
         <div className="flex justify-between items-center py-6 select-none">
           <div className="flex items-center gap-3">
             <img
-              src="https://upload.wikimedia.org/wikipedia/en/8/83/Indian_Railways.svg"
+              src="https://upload.wikimedia.org/wikipedia/hi/7/7b/Indian_Railways_logo.png"
               className="w-14 h-14 rounded-full border border-cyan-500/25"
               alt="logo"
             />
