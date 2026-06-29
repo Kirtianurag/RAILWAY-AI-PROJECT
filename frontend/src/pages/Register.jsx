@@ -97,7 +97,7 @@ export default function Register() {
         {/* Emblem */}
         <div className="flex justify-center mb-4">
           <img
-            src="https://upload.wikimedia.org/wikipedia/en/8/83/Indian_Railways.svg"
+            src="https://upload.wikimedia.org/wikipedia/hi/7/7b/Indian_Railways_logo.png"
             className="w-16 h-16 rounded-full border border-cyan-400/30 p-1 bg-slate-900/90 shadow-[0_0_15px_rgba(6,182,212,0.2)]"
             alt="Indian Railways"
           />
