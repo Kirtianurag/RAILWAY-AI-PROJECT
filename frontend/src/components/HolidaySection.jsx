@@ -5,7 +5,7 @@ const holidays = [
     title: "Maharajas' Express",
     desc: "Experience royal luxury onboard India’s most prestigious train with world-class hospitality.",
     image:
-      "https://www.themaharajatrain.com/wp-content/uploads/2024/09/Why-did-IRCTC-launch-the-Maharajas-Express.webp",
+      "https://www.indianluxurytrains.com/wp-content/uploads/2011/11/Maharajas-Express-Train-1.jpg",
     details: "Step aboard the Maharajas' Express, a 5-star hotel on wheels. Traverse India's most enchanting destinations including the Taj Mahal, Jaipur, Ranthambore, and Varanasi. Enjoy exquisite fine dining, premium spirits, and regal suites that transport you to an era of unbridled luxury and royal heritage."
   },
   {
