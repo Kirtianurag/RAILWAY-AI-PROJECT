@@ -4,7 +4,7 @@ const routes = [
     tag: "High Demand",
     desc: "Fast-moving route with heavy daily bookings and limited seats.",
     imgLeft: "https://media.newindianexpress.com/newindianexpress/2024-10-07/qreitomb/new-delhi-railway-station085553.jpg?w=1200&h=675&auto=format%2Ccompress&fit=max&enlarge=true",
-    imgRight: "https://tourism.bihar.gov.in/content/dam/bihar-tourism/images/category_a/patna/golghar/3300X2400.jpg/jcr:content/renditions/cq5dam.web.480.480.webp",
+    imgRight: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnbAoJCvMuHPfXhs7ibmXqzfC6sktnZE_ccpMnuT8cycgGv7ZAF-4_COLg&s=10",
   },
   {
     route: "Mumbai → Goa",
