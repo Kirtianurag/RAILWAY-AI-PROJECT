@@ -120,7 +120,7 @@ const Welcome = () => {
 
       {/* FOOTER STRIP */}
       <div className="absolute bottom-0 w-full text-center text-white text-xs py-4 bg-black/60 backdrop-blur-md border-t border-slate-900/80 z-20 select-none font-bold uppercase tracking-wider">
-        © 2025 RailConnect — Made by KIRTI ANURAG 
+        © 2026 RailConnect — Made by KIRTI ANURAG 
       </div>
     </div>
   );
