@@ -20,13 +20,17 @@ export const chatWithAI = async (req, res) => {
       });
     }
 
-    // Using gemini-flash-latest (Gemini 3 Flash) per user request
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`;
+    // Using active gemini-2.5-flash model with configurable env override
+    const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
     const response = await axios.post(url, {
       contents: [{
         parts: [{ text: `You are the official Railway AI Assistant. Respond concisely and professionally to: ${message}` }]
-      }]
+      }],
+      generationConfig: {
+        thinkingConfig: { thinkingBudget: 0 }
+      }
     });
 
     if (response.data && response.data.candidates) {
